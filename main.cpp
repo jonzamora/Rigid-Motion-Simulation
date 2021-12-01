@@ -19,8 +19,8 @@
 
 static const int width = 800;
 static const int height = 600;
-static const char* title = "Scene viewer";
-static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
+static const char* title = "3D Rigid Motion Viewer";
+static const glm::vec4 background(0.055f, 0.09f, 0.098f, 1.0f);
 static Scene scene;
 
 #include "hw3AutoScreenshots.h"
