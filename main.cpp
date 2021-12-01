@@ -148,7 +148,7 @@ void specialKey(int key, int x, int y){
 }
 
 // Quaternion multiplication p * q
-glm::vec4 qmultiply(const glm::vec4 p, const glm::vec4 q){
+glm::vec4 quatmultiply(const glm::vec4 p, const glm::vec4 q){
     const float p_re = p.w;
     const float q_re = q.w;
     const glm::vec3 p_im(p.x,p.y,p.z);
@@ -159,9 +159,9 @@ glm::vec4 qmultiply(const glm::vec4 p, const glm::vec4 q){
     return r;
 }
 // Quaternion conjugation
-glm::vec4 qconj(const glm::vec4 q){return glm::vec4(-q.x,-q.y,-q.z,q.w);}
+glm::vec4 quatconj(const glm::vec4 q){return glm::vec4(-q.x,-q.y,-q.z,q.w);}
 
-glm::mat3 rotation(const float degrees,const glm::vec3 axis){
+glm::mat3 rot(const float degrees,const glm::vec3 axis){
     const float angle = degrees * M_PI/180.0f; // convert to radians
     const glm::vec3 a = glm::normalize(axis);
     glm::mat3 R;
@@ -169,9 +169,9 @@ glm::mat3 rotation(const float degrees,const glm::vec3 axis){
     glm::vec4 ii(1.0f, 0.0f, 0.0f, 0.0f);
     glm::vec4 jj(0.0f, 1.0f, 0.0f, 0.0f);
     glm::vec4 kk(0.0f, 0.0f, 1.0f, 0.0f);
-    R[0] = glm::vec3(qmultiply(q,qmultiply(ii,qconj(q))));
-    R[1] = glm::vec3(qmultiply(q,qmultiply(jj,qconj(q))));
-    R[2] = glm::vec3(qmultiply(q,qmultiply(kk,qconj(q))));
+    R[0] = glm::vec3(quatmultiply(q,quatmultiply(ii,quatconj(q))));
+    R[1] = glm::vec3(quatmultiply(q,quatmultiply(jj,quatconj(q))));
+    R[2] = glm::vec3(quatmultiply(q,quatmultiply(kk,quatconj(q))));
     return R;
     //return glm::mat3(1.0f);
 }
@@ -180,7 +180,7 @@ void animation( void ){
         time_t now;
         double t = difftime(now, cur);
         w = glm::inverse(worldM)*L;
-        R = rotation(t * glm::length(w), glm::normalize(w)) * R;
+        R = rot(t * glm::length(w), glm::normalize(w)) * R;
         worldM = R*modelM*glm::transpose(R);
         scene.draw();
         glutPostRedisplay();
