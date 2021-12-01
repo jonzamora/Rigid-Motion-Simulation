@@ -1,5 +1,5 @@
-CSE 167 Rigid Motion Final Project 🌎
+# CSE 167 Rigid Motion Final Project 🌎
 
 ---
 
-Partners: Jonathan Zamora-Anaya and Shunkai Yu
+**Partners**: Jonathan Zamora-Anaya and Shunkai Yu
