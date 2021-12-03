@@ -1,8 +1,13 @@
 
 // The scene init definition 
 #include "Scene.inl"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 using namespace glm;
+
+static glm::mat4 originalM = scale(vec3(1.0f));
+
 void Scene::draw(void){
 
     // Pre-draw sequence: assign uniforms that are the same for all Geometry::draw call.  These uniforms include the camera view, proj, and the lights.  These uniform do not include modelview and material parameters.
@@ -26,7 +31,7 @@ void Scene::draw(void){
     // Initialize the current state variable for DFS
     Node* cur = node["world"]; // root of the tree
     mat4 cur_VM = camera -> view; // HW3: You will update this current modelview during the depth first search.  Initially, we are at the "world" node, whose modelview matrix is just camera's view matrix.
-
+    
     // HW3: The following is the beginning of the depth-first search algorithm.
     // HW3: The depth-first search for the node traversal has already been implemented (cur, dfs_stack).
     // HW3: All you have to do is to also update the states of (cur_VM, matrix_stack) alongside the traversal.  You will only need to modify starting from this line.
@@ -71,11 +76,10 @@ void Scene::draw(void){
     // HW3: Your code will only be above this line.
 }
 
-void Scene::update( glm::mat3 transformation)
+void Scene::update( glm::mat3 R)
 {
     Node* model = node["planets"];
-    glm::mat4 storedM = model->modeltransforms.at(0);
     model->modeltransforms.pop_back();
-    glm::mat4 newM = glm::mat4(transformation);
-    model->modeltransforms.push_back(newM * storedM);
+    model->modeltransforms.push_back(glm::mat4(R) * originalM);
+    // std::cout << glm::to_string(R) << std::endl;
 }

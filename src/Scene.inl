@@ -38,7 +38,7 @@ void Scene::init(void){
     // Build the scene graph
     node["planets"] = new Node;
     node["planets"] -> models.push_back( model["planets"] );
-    node["planets"] -> modeltransforms.push_back( scale(vec3(0.5f)) * translate(vec3(0.0f,1.0f,4.0f)) ); // The horizontal position of planets is changed here
+    node["planets"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // The horizontal position of planets is changed here
     
     node["world"] -> childnodes.push_back( node["planets"] );
     node["world"] -> childtransforms.push_back( translate(vec3(-1.8f,0.0f,0.0f)) * rotate( 90.0f*float(M_PI)/180.0f, vec3(0.0f, 1.0f, 0.0f) ));

@@ -174,7 +174,6 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
     R[1] = glm::vec3(quatmultiply(q,quatmultiply(jj,quatconj(q))));
     R[2] = glm::vec3(quatmultiply(q,quatmultiply(kk,quatconj(q))));
     return R;
-    //return glm::mat3(1.0f);
 }
 
 void animation( void ){
@@ -186,7 +185,7 @@ void animation( void ){
         R = rot(t * glm::length(w), glm::normalize(w)) * R;
         worldM = R * modelM * glm::transpose(R);
 
-        scene.update(worldM);
+        scene.update(R);
         scene.draw();
 
         glutPostRedisplay();
