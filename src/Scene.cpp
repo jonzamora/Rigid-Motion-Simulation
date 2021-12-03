@@ -6,7 +6,7 @@
 
 using namespace glm;
 
-static glm::mat4 originalM = scale(vec3(1.0f));
+static glm::mat4 originalM = scale(vec3(0.5f));
 
 void Scene::draw(void){
 
