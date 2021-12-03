@@ -15,6 +15,9 @@
 #include "Screenshot.h"
 #include "Scene.h"
 #include <ctime>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
+#include <chrono>
 
 
 static const int width = 800;
@@ -46,7 +49,7 @@ static glm::vec3 w;
 static glm::mat3 modelM;
 static glm::mat3 worldM;
 static glm::vec3 L;
-static time_t cur;
+static double cur;
 
 void initialize( void ) {
     
@@ -57,11 +60,12 @@ void initialize( void ) {
     //start initializing
     float width = 3; // mu1
     float depth = 4; // mu2
-    float height = 3; // mu3
+    float height = 5; // mu3
 
     cur = std::time(nullptr); // initialize time to start value
+    // cur = std::chrono::system_clock::now();
     R = glm::mat3(1.0f); // R is the Identity Matrix
-    w = glm::vec3(0.5f, 0.5f, 0.5f); // angular velocity w \in R^3 world
+    w = glm::vec3(0.0f, 4.0f, 0.0f); // angular velocity w \in R^3 world
     modelM = glm::mat3(glm::vec3(width, 0.0f, 0.0f), glm::vec3(0.0f, depth, 0.0f), glm::vec3(0.0f, 0.0f, height));
     worldM = R * modelM * glm::transpose(R);
     L = worldM * w; // angular momentum
@@ -177,12 +181,16 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
 }
 
 void animation( void ){
-        time_t now = std::time(nullptr);
-        double t = now - cur;
+        double now = std::time(nullptr);
+        // auto now = chrono::system_clock::now();
+        std::cout << "now: " << now << " cur: " << cur << std::endl;
+        auto t = now - cur;
         cur = now;
 
         w = glm::inverse(worldM) * L;
+        // std::cout << "angular velocity: " << glm::to_string(w) << std::endl;
         R = rot(t * glm::length(w), glm::normalize(w)) * R;
+        // std::cout << "t: " << t << " length(w): " << glm::length(w) << std::endl;
         worldM = R * modelM * glm::transpose(R);
 
         scene.update(R);
