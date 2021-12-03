@@ -81,5 +81,4 @@ void Scene::update( glm::mat3 R)
     Node* model = node["planets"];
     model->modeltransforms.pop_back();
     model->modeltransforms.push_back(glm::mat4(R) * originalM);
-    // std::cout << glm::to_string(R) << std::endl;
 }

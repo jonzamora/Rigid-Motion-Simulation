@@ -183,7 +183,9 @@ void animation( void ){
         t1 = t2;
 
         w = glm::inverse(worldM) * L;
-        R = rot(dt * glm::length(w), glm::normalize(w)) * R;
+        glm::vec3 alpha = -glm::inverse(worldM) * (w * L);
+        glm::vec3 wNew = w + ((alpha * (dt/2.0f)) + ( (pow(dt, 2) / 12.0f) * (alpha * w)));
+        R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
         worldM = R * modelM * glm::transpose(R);
 
         scene.update(R);
