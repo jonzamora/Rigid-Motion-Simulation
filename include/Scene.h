@@ -52,6 +52,7 @@ public:
     
     void init( void );
     void draw( void );
+    void update( glm::mat3 );
     
     // destructor
     ~Scene(){

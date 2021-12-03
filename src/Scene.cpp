@@ -69,9 +69,13 @@ void Scene::draw(void){
 
     } // End of DFS while loop.
     // HW3: Your code will only be above this line.
-    
-    
 }
 
-
-
+void Scene::update( glm::mat3 transformation)
+{
+    Node* model = node["planets"];
+    glm::mat4 storedM = model->modeltransforms.at(0);
+    model->modeltransforms.pop_back();
+    glm::mat4 newM = glm::mat4(transformation);
+    model->modeltransforms.push_back(newM * storedM);
+}

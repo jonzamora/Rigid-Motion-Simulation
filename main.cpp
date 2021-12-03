@@ -48,7 +48,7 @@ static glm::mat3 worldM;
 static glm::vec3 L;
 static time_t cur;
 
-void initialize(void){
+void initialize( void ) {
     
     printHelp();
     glClearColor(background[0], background[1], background[2], background[3]); // background color
@@ -59,11 +59,12 @@ void initialize(void){
     float depth = 4; // mu2
     float height = 3; // mu3
 
-    glm::mat3 R( 1.0f ); // R is the Identity Matrix
-    glm::vec3 w = glm::vec3(0.5f, 0.5f, 0.5f); // angular velocity w \in R^3 world
-    glm::mat3 modelM = glm::mat3(glm::vec3(width, 0.0f, 0.0f), glm::vec3(0.0f, depth, 0.0f), glm::vec3(0.0f, 0.0f, height));
-    glm::mat3 worldM = R * modelM * glm::transpose(R);
-    glm::vec3 L = worldM * w; // angular momentum
+    cur = std::time(nullptr); // initialize time to start value
+    R = glm::mat3(1.0f); // R is the Identity Matrix
+    w = glm::vec3(0.5f, 0.5f, 0.5f); // angular velocity w \in R^3 world
+    modelM = glm::mat3(glm::vec3(width, 0.0f, 0.0f), glm::vec3(0.0f, depth, 0.0f), glm::vec3(0.0f, 0.0f, height));
+    worldM = R * modelM * glm::transpose(R);
+    L = worldM * w; // angular momentum
     
     // Initialize scene
     scene.init();
@@ -161,7 +162,7 @@ glm::vec4 quatmultiply(const glm::vec4 p, const glm::vec4 q){
 // Quaternion conjugation
 glm::vec4 quatconj(const glm::vec4 q){return glm::vec4(-q.x,-q.y,-q.z,q.w);}
 
-glm::mat3 rot(const float degrees,const glm::vec3 axis){
+glm::mat3 rot(const float degrees, const glm::vec3 axis){
     const float angle = degrees * M_PI/180.0f; // convert to radians
     const glm::vec3 a = glm::normalize(axis);
     glm::mat3 R;
@@ -177,12 +178,17 @@ glm::mat3 rot(const float degrees,const glm::vec3 axis){
 }
 
 void animation( void ){
-        time_t now;
-        double t = difftime(now, cur);
-        w = glm::inverse(worldM)*L;
+        time_t now = std::time(nullptr);
+        double t = now - cur;
+        cur = now;
+
+        w = glm::inverse(worldM) * L;
         R = rot(t * glm::length(w), glm::normalize(w)) * R;
-        worldM = R*modelM*glm::transpose(R);
+        worldM = R * modelM * glm::transpose(R);
+
+        scene.update(worldM);
         scene.draw();
+
         glutPostRedisplay();
 }
 
