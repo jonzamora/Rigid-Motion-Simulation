@@ -11,4 +11,4 @@
 
 
 > ![first order method](first-order-method.gif)
-> **Figure 2: Simple First-Order Method Algorithm
+> **Figure 2: Simple First-Order Method Algorithm**
