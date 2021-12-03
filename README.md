@@ -8,3 +8,7 @@
 
 > ![planets](planets.png)
 > **Figure 1: Planets with Lighting**
+
+
+> ![first order method](first-order-method.gif)
+> **Figure 2: Simple First-Order Method Algorithm
