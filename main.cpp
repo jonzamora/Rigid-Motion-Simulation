@@ -179,12 +179,12 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
 
 void animation( void ){
         double t2 = glutGet(GLUT_ELAPSED_TIME);
-        double dt = t2 - t1;
+        float dt = t2 - t1;
         t1 = t2;
 
         w = glm::inverse(worldM) * L;
         glm::vec3 alpha = -glm::inverse(worldM) * (w * L);
-        glm::vec3 wNew = w + ((alpha * (dt/2.0f)) + ( (pow(dt, 2) / 12.0f) * (alpha * w)));
+        glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * (alpha * w));
         R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
         worldM = R * modelM * glm::transpose(R);
 
