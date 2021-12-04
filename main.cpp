@@ -183,9 +183,10 @@ void animation( void ){
         t1 = t2;
 
         w = glm::inverse(worldM) * L;
-        glm::vec3 alpha = -glm::inverse(worldM) * (w * L);
-        glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * (alpha * w));
+        glm::vec3 alpha = -glm::inverse(worldM) * glm::cross(w, L);
+        glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * glm::cross(alpha, w));
         R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
+        // std::cout << "R: " << glm::to_string(R) << std::endl;
         worldM = R * modelM * glm::transpose(R);
 
         scene.update(R);
