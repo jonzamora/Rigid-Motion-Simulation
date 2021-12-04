@@ -12,3 +12,6 @@
 
 > ![first order method](first-order-method.gif)
 > **Figure 2: Simple First-Order Method Algorithm**
+
+> ![second order method](second-order-method.gif)
+> **Figure 3: Buss’ Augmented Second-Order Method Algorithm**
