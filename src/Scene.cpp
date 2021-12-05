@@ -81,4 +81,12 @@ void Scene::update( glm::mat3 R)
     Node* model = node["planets"];
     model->modeltransforms.pop_back();
     model->modeltransforms.push_back(glm::mat4(R) * originalM);
+
+    Node* modelE = node["E ellipsoid"];
+    modelE->modeltransforms.pop_back();
+    modelE->modeltransforms.push_back(glm::mat4(R) * originalM);
+
+    Node* modelF = node["F ellipsoid"];
+    modelF->modeltransforms.pop_back();
+    modelF->modeltransforms.push_back(glm::mat4(R) * originalM);
 }

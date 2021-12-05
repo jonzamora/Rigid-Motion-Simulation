@@ -8,27 +8,46 @@ using namespace glm;
 void Scene::init(void){
     // Create a geometry palette
     geometry["planets"] = new Obj;
+    geometry["E ellipsoid"] = new Obj;
+    geometry["F ellipsoid"] = new Obj;
+
     geometry["planets"] -> init("models/planets.obj");
+    geometry["E ellipsoid"] -> init("models/sphere.obj");
+    geometry["F ellipsoid"] -> init("models/sphere.obj");
     
     // Create a material palette
-    material["white"] = new Material;
-    material["white"] -> ambient = vec4(0.05f, 0.05f, 0.05f, 1.0f);
-    material["white"] -> diffuse = vec4(0.5f, 0.5f, 0.5f, 1.0f);
-    material["white"] -> specular = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    material["white"] -> emision = vec4(0.7f,0.7f,0.7f,1.0f);
-    material["white"] -> shininess = 78.125f;
-
     // Source: http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
     material["red rubber"] = new Material;
     material["red rubber"] -> ambient = vec4(0.05f,0.0f,0.0f,1.0f);
     material["red rubber"] -> diffuse = vec4(0.5f,0.4f,0.4f,1.0f);
     material["red rubber"] -> specular = vec4(0.7f,0.04f,0.04f,1.0f);
-    material["red rubber"] -> shininess = 10.0f ;
+    material["red rubber"] -> shininess = 10.0f;
+
+    material["green rubber"] = new Material;
+    material["green rubber"] -> ambient = vec4(0.0f,0.05f,0.0f,1.0f);
+    material["green rubber"] -> diffuse = vec4(0.4f,0.5f,0.4f,1.0f);
+    material["green rubber"] -> specular = vec4(0.04f,0.7f,0.04f,1.0f);
+    material["green rubber"] -> shininess = 10.0f;
+
+    material["cyan rubber"] = new Material;
+    material["cyan rubber"] -> ambient = vec4(0.0f,0.05f,0.05f,1.0f);
+    material["cyan rubber"] -> diffuse = vec4(0.4f,0.5f,0.5f,1.0f);
+    material["cyan rubber"] -> specular = vec4(0.04f,0.7f,0.7f,1.0f);
+    material["cyan rubber"] -> shininess = 10.0f;
+
     
     // Create a model palette
     model["planets"] = new Model;
     model["planets"] -> geometry = geometry["planets"];
     model["planets"] -> material = material["red rubber"];
+
+    model["E ellipsoid"] = new Model;
+    model["E ellipsoid"] -> geometry = geometry["E ellipsoid"];
+    model["E ellipsoid"] -> material = material["green rubber"];
+
+    model["F ellipsoid"] = new Model;
+    model["F ellipsoid"] -> geometry = geometry["F ellipsoid"];
+    model["F ellipsoid"] -> material = material["cyan rubber"];
     
     // Create a light palette
     light["sun"] = new Light;
@@ -38,10 +57,22 @@ void Scene::init(void){
     // Build the scene graph
     node["planets"] = new Node;
     node["planets"] -> models.push_back( model["planets"] );
-    node["planets"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // The horizontal position of planets is changed here
+    node["planets"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the planets to half the original size
+
+    node["E ellipsoid"] = new Node;
+    node["E ellipsoid"] -> models.push_back( model["E ellipsoid"] );
+    node["E ellipsoid"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the E ellipsoid by half and translate up on y-axis
+
+    node["F ellipsoid"] = new Node;
+    node["F ellipsoid"] -> models.push_back( model["F ellipsoid"] );
+    node["F ellipsoid"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the F ellipsoid by half and translate down on y-axis
     
     node["world"] -> childnodes.push_back( node["planets"] );
-    node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)) * rotate( 135.0f*float(M_PI)/180.0f, vec3(0.0f, 1.0f, 0.0f) ));
+    node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
+    node["world"] -> childnodes.push_back( node["E ellipsoid"] );
+    node["world"] -> childtransforms.push_back( translate(vec3(-1.0f,0.25f,0.0f)));
+    node["world"] -> childnodes.push_back( node["F ellipsoid"] );
+    node["world"] -> childtransforms.push_back( translate(vec3(1.0f,1.75f,0.0f)));
     
     // Put a camera
     camera = new Camera;

@@ -44,10 +44,13 @@ void printHelp(){
 
 static glm::mat3 R;
 static glm::vec3 w;
-static glm::mat3 modelM;
-static glm::mat3 worldM;
+static glm::mat3 M_model;
+static glm::mat3 M_world;
 static glm::vec3 L;
 static double t1;
+static glm::vec3 omega;
+static float E;
+static float F;
 
 void initialize( void ) {
     
@@ -56,16 +59,23 @@ void initialize( void ) {
     glViewport(0, 0, width, height);
 
     //start initializing
-    float width = 3; // mu1
-    float depth = 4; // mu2
-    float height = 5; // mu3
+    float mu1 = 3; // width
+    float mu2 = 4; // depth
+    float mu3 = 5; // height
 
     t1 = glutGet(GLUT_ELAPSED_TIME); // get initial time
     R = glm::mat3(1.0f); // R is the Identity Matrix
     w = glm::vec3(0.0f, 0.1f, 0.0f); // angular velocity w \in R^3 world
-    modelM = glm::mat3(glm::vec3(width, 0.0f, 0.0f), glm::vec3(0.0f, depth, 0.0f), glm::vec3(0.0f, 0.0f, height));
-    worldM = R * modelM * glm::transpose(R);
-    L = worldM * w; // angular momentum
+
+    // Poinsot's ellipsoids initialization
+    omega = glm::inverse(R) * w;
+    E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
+    F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
+    std::cout << "E: " << E << " F: " << F << std::endl;
+
+    M_model = glm::mat3(glm::vec3(mu1, 0.0f, 0.0f), glm::vec3(0.0f, mu2, 0.0f), glm::vec3(0.0f, 0.0f, mu3));
+    M_world = R * M_model * glm::transpose(R);
+    L = M_world * w; // angular momentum
     
     // Initialize scene
     scene.init();
@@ -182,12 +192,12 @@ void animation( void ){
         float dt = t2 - t1;
         t1 = t2;
 
-        w = glm::inverse(worldM) * L;
-        glm::vec3 alpha = -glm::inverse(worldM) * glm::cross(w, L);
+        w = glm::inverse(M_world) * L;
+        glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
         glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * glm::cross(alpha, w));
         R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
         // std::cout << "R: " << glm::to_string(R) << std::endl;
-        worldM = R * modelM * glm::transpose(R);
+        M_world = R * M_model * glm::transpose(R);
 
         scene.update(R);
         scene.draw();
