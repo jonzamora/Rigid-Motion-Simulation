@@ -84,13 +84,13 @@ void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega)
     
     Node* modelE = node["E ellipsoid"];
     modelE->modeltransforms.pop_back();
-    modelE->modeltransforms.push_back(scale(SA1) * originalM);
+    modelE->modeltransforms.push_back(scale(SA1) * originalM * scale(glm::vec3(0.001f)));
 
     Node* modelF = node["F ellipsoid"];
     modelF->modeltransforms.pop_back();
-    modelF->modeltransforms.push_back(scale(SA2) * originalM);
+    modelF->modeltransforms.push_back(scale(SA2) * originalM * scale(glm::vec3(0.001f)));
 
     Node* modelV = node["velocity"];
     modelV->modeltransforms.pop_back();
-    modelV->modeltransforms.push_back(translate(omega) * originalM);
+    modelV->modeltransforms.push_back(translate(omega) * originalM * scale(glm::vec3(0.001f)));
 }

@@ -69,7 +69,7 @@ void initialize( void ) {
 
     t1 = glutGet(GLUT_ELAPSED_TIME); // get initial time
     R = glm::mat3(1.0f); // R is the Identity Matrix
-    w = glm::vec3(0.0f, 4.0f, 0.0f); // angular velocity w \in R^3 world
+    w = glm::vec3(0.0f, 1.0f, 0.0f); // angular velocity w \in R^3 world
 
     // Poinsot's ellipsoids initialization
     omega = glm::inverse(R) * w;
@@ -204,7 +204,8 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
 
 void animation( void ){
         double t2 = glutGet(GLUT_ELAPSED_TIME);
-        float dt = t2 - t1;
+        float dt = (t2 - t1);
+        dt = 0.15;
         t1 = t2;
 
         // Algorithm 2: Buss' Augmented Second-Order Method
@@ -216,8 +217,9 @@ void animation( void ){
 
         // Poinsot's Ellipsoids
         omega = glm::inverse(R) * w;
-        E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
-        F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
+        std::cout << glm::to_string(w) << std::endl;
+        // E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
+        // F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
         SA1 = glm::vec3(glm::sqrt(E/mu1), glm::sqrt(E/mu2), glm::sqrt(E/mu3));
         SA2 = glm::vec3(glm::sqrt(F)/mu1, glm::sqrt(F)/mu2, glm::sqrt(F)/mu3);
 
