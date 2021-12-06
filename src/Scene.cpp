@@ -6,7 +6,7 @@
 
 using namespace glm;
 
-static glm::mat4 originalM = scale(vec3(0.5f));
+static glm::mat4 originalM = scale(vec3(1.0f));
 
 void Scene::draw(void){
 
@@ -76,17 +76,21 @@ void Scene::draw(void){
     // HW3: Your code will only be above this line.
 }
 
-void Scene::update( glm::mat3 R)
+void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega)
 {
     Node* model = node["planets"];
     model->modeltransforms.pop_back();
     model->modeltransforms.push_back(glm::mat4(R) * originalM);
-
+    
     Node* modelE = node["E ellipsoid"];
     modelE->modeltransforms.pop_back();
-    modelE->modeltransforms.push_back(glm::mat4(R) * originalM);
+    modelE->modeltransforms.push_back(scale(SA1) * originalM);
 
     Node* modelF = node["F ellipsoid"];
     modelF->modeltransforms.pop_back();
-    modelF->modeltransforms.push_back(glm::mat4(R) * originalM);
+    modelF->modeltransforms.push_back(scale(SA2) * originalM);
+
+    Node* modelV = node["velocity"];
+    modelV->modeltransforms.pop_back();
+    modelV->modeltransforms.push_back(translate(omega) * originalM);
 }

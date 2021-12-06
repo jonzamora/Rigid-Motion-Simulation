@@ -36,6 +36,7 @@ void printHelp(){
       press 'A'/'Z' to zoom.
       press 'R' to reset camera.
       press 'L' to turn on/off the lighting.
+      press 'E' to visualize Poinsot's ellipsoids
     
       press Spacebar to generate images for hw3 submission.
     
@@ -51,6 +52,9 @@ static double t1;
 static glm::vec3 omega;
 static float E;
 static float F;
+static float mu1, mu2, mu3;
+static glm::vec3 SA1, SA2;
+static bool ellipsoids = false;
 
 void initialize( void ) {
     
@@ -59,19 +63,20 @@ void initialize( void ) {
     glViewport(0, 0, width, height);
 
     //start initializing
-    float mu1 = 3; // width
-    float mu2 = 4; // depth
-    float mu3 = 5; // height
+    mu1 = 2; // width
+    mu2 = 4; // depth
+    mu3 = 8; // height
 
     t1 = glutGet(GLUT_ELAPSED_TIME); // get initial time
     R = glm::mat3(1.0f); // R is the Identity Matrix
-    w = glm::vec3(0.0f, 0.1f, 0.0f); // angular velocity w \in R^3 world
+    w = glm::vec3(0.0f, 4.0f, 0.0f); // angular velocity w \in R^3 world
 
     // Poinsot's ellipsoids initialization
     omega = glm::inverse(R) * w;
     E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
     F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
-    std::cout << "E: " << E << " F: " << F << std::endl;
+    SA1 = glm::vec3(glm::sqrt(E/mu1), glm::sqrt(E/mu2), glm::sqrt(E/mu3));
+    SA2 = glm::vec3(glm::sqrt(F)/mu1, glm::sqrt(F)/mu2, glm::sqrt(F)/mu3);
 
     M_model = glm::mat3(glm::vec3(mu1, 0.0f, 0.0f), glm::vec3(0.0f, mu2, 0.0f), glm::vec3(0.0f, 0.0f, mu3));
     M_world = R * M_model * glm::transpose(R);
@@ -133,6 +138,16 @@ void keyboard(unsigned char key, int x, int y){
             hw3AutoScreenshots();
             glutPostRedisplay();
             break;
+        case 'e':
+            ellipsoids = !ellipsoids;
+            if (ellipsoids == 1)
+            {
+                std::cout << "ENABLE ELLIPSOIDS: YES" << std::endl;
+            }
+            else
+            {
+                std::cout << "ENABLE ELLIPSOIDS: NO" << std::endl;
+            }
         default:
             glutPostRedisplay();
             break;
@@ -192,14 +207,21 @@ void animation( void ){
         float dt = t2 - t1;
         t1 = t2;
 
+        // Algorithm 2: Buss' Augmented Second-Order Method
         w = glm::inverse(M_world) * L;
         glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
         glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * glm::cross(alpha, w));
         R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
-        // std::cout << "R: " << glm::to_string(R) << std::endl;
         M_world = R * M_model * glm::transpose(R);
 
-        scene.update(R);
+        // Poinsot's Ellipsoids
+        omega = glm::inverse(R) * w;
+        E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
+        F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
+        SA1 = glm::vec3(glm::sqrt(E/mu1), glm::sqrt(E/mu2), glm::sqrt(E/mu3));
+        SA2 = glm::vec3(glm::sqrt(F)/mu1, glm::sqrt(F)/mu2, glm::sqrt(F)/mu3);
+
+        scene.update(R, SA1, SA2, omega);
         scene.draw();
 
         glutPostRedisplay();

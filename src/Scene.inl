@@ -10,10 +10,12 @@ void Scene::init(void){
     geometry["planets"] = new Obj;
     geometry["E ellipsoid"] = new Obj;
     geometry["F ellipsoid"] = new Obj;
+    geometry["velocity"] = new Obj;
 
     geometry["planets"] -> init("models/planets.obj");
     geometry["E ellipsoid"] -> init("models/sphere.obj");
     geometry["F ellipsoid"] -> init("models/sphere.obj");
+    geometry["velocity"] -> init("models/sphere.obj");
     
     // Create a material palette
     // Source: http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
@@ -35,6 +37,12 @@ void Scene::init(void){
     material["cyan rubber"] -> specular = vec4(0.04f,0.7f,0.7f,1.0f);
     material["cyan rubber"] -> shininess = 10.0f;
 
+    material["black rubber"] = new Material;
+    material["black rubber"] -> ambient = vec4(0.02f, 0.02f, 0.02f, 1.0f);
+    material["black rubber"] -> diffuse = vec4(0.01f, 0.01f, 0.01f, 1.0f);
+    material["black rubber"] -> specular = vec4(0.4f, 0.4f, 0.4f, 1.0f);
+    material["black rubber"] -> shininess = 10.0f;
+
     
     // Create a model palette
     model["planets"] = new Model;
@@ -48,36 +56,51 @@ void Scene::init(void){
     model["F ellipsoid"] = new Model;
     model["F ellipsoid"] -> geometry = geometry["F ellipsoid"];
     model["F ellipsoid"] -> material = material["cyan rubber"];
+
+    model["velocity"] = new Model;
+    model["velocity"] -> geometry = geometry["velocity"];
+    model["velocity"] -> material = material["black rubber"];
     
     // Create a light palette
     light["sun"] = new Light;
     light["sun"] -> position = vec4(3.0f,2.0f,1.0f,0.0f);
     light["sun"] -> color = 1.0f*vec4(1.0f,1.0f,1.0f,1.0f);
+
+    // Create a light palette
+    light["sun2"] = new Light;
+    light["sun2"] -> position = vec4(-3.0f,-2.0f,-1.0f,0.0f);
+    light["sun2"] -> color = 1.0f*vec4(1.0f,1.0f,1.0f,1.0f);
     
     // Build the scene graph
     node["planets"] = new Node;
     node["planets"] -> models.push_back( model["planets"] );
-    node["planets"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the planets to half the original size
+    node["planets"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the planets to half the original size
 
     node["E ellipsoid"] = new Node;
     node["E ellipsoid"] -> models.push_back( model["E ellipsoid"] );
-    node["E ellipsoid"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the E ellipsoid by half and translate up on y-axis
+    node["E ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the E ellipsoid by half
 
     node["F ellipsoid"] = new Node;
     node["F ellipsoid"] -> models.push_back( model["F ellipsoid"] );
-    node["F ellipsoid"] -> modeltransforms.push_back( scale(vec3(0.5f)) ); // we scale the F ellipsoid by half and translate down on y-axis
+    node["F ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the F ellipsoid by half
+
+    node["velocity"] = new Node;
+    node["velocity"] -> models.push_back( model["velocity"] );
+    node["velocity"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the velocity sphere by half
     
     node["world"] -> childnodes.push_back( node["planets"] );
     node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
     node["world"] -> childnodes.push_back( node["E ellipsoid"] );
-    node["world"] -> childtransforms.push_back( translate(vec3(-1.0f,0.25f,0.0f)));
+    node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
     node["world"] -> childnodes.push_back( node["F ellipsoid"] );
-    node["world"] -> childtransforms.push_back( translate(vec3(1.0f,1.75f,0.0f)));
+    node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
+    node["world"] -> childnodes.push_back( node["velocity"] );
+    node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
     
     // Put a camera
     camera = new Camera;
     camera -> target_default = vec3( 0.0f, 1.0f, 0.0f );
-    camera -> eye_default = vec3( 0.0f, 1.0f, 5.0f );
+    camera -> eye_default = vec3( 0.0f, 1.0f, 25.0f );
     camera -> up_default = vec3( 0.0f, 1.0f, 0.0f );
     camera -> reset();
     
