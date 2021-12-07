@@ -217,8 +217,6 @@ void animation( void ){
         // Poinsot's Ellipsoids
         omega = glm::inverse(R) * w;
         std::cout << "omega: " << glm::to_string(omega) << std::endl;
-        SA1 = glm::vec3(glm::sqrt(E/mu1), glm::sqrt(E/mu2), glm::sqrt(E/mu3));
-        SA2 = glm::vec3(glm::sqrt(F)/mu1, glm::sqrt(F)/mu2, glm::sqrt(F)/mu3);
 
         scene.update(R, SA1, SA2, omega, ellipsoids);
         scene.draw();
