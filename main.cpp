@@ -17,6 +17,7 @@
 #include <ctime>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
+#include <math.h>
 
 static const int width = 800;
 static const int height = 600;
@@ -63,9 +64,9 @@ void initialize( void ) {
     glViewport(0, 0, width, height);
 
     //start initializing
-    mu1 = 2.0; // width
-    mu2 = 4.0; // depth
-    mu3 = 8.0; // height
+    mu1 = 2.0f; // width
+    mu2 = 4.0f; // depth
+    mu3 = 8.0f; // height
 
     t1 = glutGet(GLUT_ELAPSED_TIME); // get initial time
     R = glm::mat3(1.0f); // R is the Identity Matrix
@@ -73,8 +74,8 @@ void initialize( void ) {
 
     // Poinsot's ellipsoids initialization
     omega = glm::inverse(R) * w;
-    E = mu1 * pow(omega.x, 2) + mu2 * pow(omega.y, 2) + mu3 * pow(omega.z, 2); // equation (13)
-    F = pow(mu1, 2) * pow(omega.x, 2) + pow(mu2, 2) * pow(omega.y, 2) + pow(mu3, 2) * pow(omega.z, 2); // equation (15)
+    E = mu1 * pow(omega.x, 2.0f) + mu2 * pow(omega.y, 2.0f) + mu3 * pow(omega.z, 2.0f); // equation (13)
+    F = pow(mu1, 2.0f) * pow(omega.x, 2.0f) + pow(mu2, 2.0f) * pow(omega.y, 2.0f) + pow(mu3, 2.0f) * pow(omega.z, 2.0f); // equation (15)
     SA1 = glm::vec3(glm::sqrt(E/mu1), glm::sqrt(E/mu2), glm::sqrt(E/mu3));
     SA2 = glm::vec3(glm::sqrt(F)/mu1, glm::sqrt(F)/mu2, glm::sqrt(F)/mu3);
 
@@ -204,13 +205,13 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
 
 void animation( void ){
         float t2 = glutGet(GLUT_ELAPSED_TIME);
-        float dt = (t2 - t1) / 10;
+        float dt = 0.1f;
         t1 = t2;
 
         // Algorithm 2: Buss' Augmented Second-Order Method
         w = glm::inverse(M_world) * L;
         glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
-        glm::vec3 wNew = w + ((dt / 2) * alpha) + (float(pow(dt, 2)/12) * glm::cross(alpha, w));
+        glm::vec3 wNew = w + (float(dt / 2.0f) * alpha) + (float(pow(dt, 2.0f)/12.0f) * glm::cross(alpha, w));
         R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
         M_world = R * M_model * glm::transpose(R);
 
