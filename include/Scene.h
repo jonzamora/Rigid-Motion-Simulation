@@ -52,7 +52,7 @@ public:
     
     void init( void );
     void draw( void );
-    void update( glm::mat3, glm::vec3, glm::vec3, glm::vec3, bool );
+    void update( glm::mat3, glm::vec3, glm::vec3, glm::vec3, glm::vec3, bool, bool );
     
     // destructor
     ~Scene(){

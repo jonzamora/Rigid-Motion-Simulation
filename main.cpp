@@ -38,6 +38,7 @@ void printHelp(){
       press 'R' to reset camera.
       press 'L' to turn on/off the lighting.
       press 'E' to visualize Poinsot's ellipsoids
+      press 'T' to translate the rigid object
     
       press Spacebar to generate images for hw3 submission.
     
@@ -56,6 +57,12 @@ static float F;
 static float mu1, mu2, mu3;
 static glm::vec3 SA1, SA2;
 static bool ellipsoids = true;
+static bool translation = true;
+static bool resetT1 = false;
+static glm::vec3 b0;
+static glm::vec3 v0;
+static glm::vec3 a;
+static glm::vec3 b;
 
 void initialize( void ) {
     
@@ -82,6 +89,13 @@ void initialize( void ) {
     M_model = glm::mat3(glm::vec3(mu1, 0.0f, 0.0f), glm::vec3(0.0f, mu2, 0.0f), glm::vec3(0.0f, 0.0f, mu3));
     M_world = R * M_model * glm::transpose(R);
     L = M_world * w; // angular momentum
+
+    //translation
+    b0 = glm::vec3(0.0f,0.5f,0.0f);
+    v0 = glm::vec3(0.1f,0.1f,0.1f);
+    a = glm::vec3(-0.5f,-0.5f,-0.5f);
+    
+    b = b0;
     
     // Initialize scene
     scene.init();
@@ -149,6 +163,18 @@ void keyboard(unsigned char key, int x, int y){
             {
                 std::cout << "ENABLE ELLIPSOIDS: NO" << std::endl;
             }
+            break;
+        case 't':
+            translation = !translation;
+            if (translation == 1)
+            {
+                std::cout << "ENABLE TRANSLATION: YES" << std::endl;
+            }
+            else
+            {
+                std::cout << "ENABLE TRANSLATION: NO" << std::endl;
+            }
+            break;
         default:
             glutPostRedisplay();
             break;
@@ -175,25 +201,29 @@ void specialKey(int key, int x, int y){
     }
 }
 
-void animation( void ){
-        float t2 = glutGet(GLUT_ELAPSED_TIME);
-        float dt = (t2 - t1) / 10;
-        t1 = t2;
+void animation( void )
+{
+    float t2 = glutGet(GLUT_ELAPSED_TIME);
+    float dt = (t2 - t1) / 10;
+    t1 = t2;
 
-        // Algorithm 2: Buss' Augmented Second-Order Method
-        w = glm::inverse(M_world) * L;
-        glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
-        glm::vec3 wNew = w + (float(dt / 2.0f) * alpha) + (float(pow(dt, 2.0f)/12.0f) * glm::cross(alpha, w));
-        R = glm::mat3(glm::rotate(glm::mat4(R), glm::radians(dt * glm::length(wNew)), glm::normalize(wNew)));
-        M_world = R * M_model * glm::transpose(R);
+    // Algorithm 2: Buss' Augmented Second-Order Method
+    w = glm::inverse(M_world) * L;
+    glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
+    glm::vec3 wNew = w + (float(dt / 2.0f) * alpha) + (float(pow(dt, 2.0f)/12.0f) * glm::cross(alpha, w));
+    R = glm::mat3(glm::rotate(glm::mat4(R), glm::radians(dt * glm::length(wNew)), glm::normalize(wNew)));
+    M_world = R * M_model * glm::transpose(R);
 
-        // Poinsot's Ellipsoids
-        omega = glm::inverse(R) * w;
+    // Poinsot's Ellipsoids
+    omega = glm::inverse(R) * w;
+    
+    // translation
+    b = b0 + v0 * t1/1000.0f + 0.5f * a * (float(pow(t1/1000.0f, 2.0f)));
 
-        scene.update(R, SA1, SA2, omega, ellipsoids);
-        scene.draw();
+    scene.update(R, SA1, SA2, omega, b, ellipsoids, translation);
+    scene.draw();
 
-        glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 int main(int argc, char** argv)
