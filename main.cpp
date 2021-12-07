@@ -175,34 +175,6 @@ void specialKey(int key, int x, int y){
     }
 }
 
-// Quaternion multiplication p * q
-glm::vec4 quatmultiply(const glm::vec4 p, const glm::vec4 q){
-    const float p_re = p.w;
-    const float q_re = q.w;
-    const glm::vec3 p_im(p.x,p.y,p.z);
-    const glm::vec3 q_im(q.x,q.y,q.z);
-    float r_re = p_re * q_re - glm::dot(p_im,q_im);
-    glm::vec3 r_im = p_re * q_im + q_re * p_im + glm::cross(p_im,q_im);
-    glm::vec4 r = glm::vec4(r_im,r_re);
-    return r;
-}
-// Quaternion conjugation
-glm::vec4 quatconj(const glm::vec4 q){return glm::vec4(-q.x,-q.y,-q.z,q.w);}
-
-glm::mat3 rot(const float degrees, const glm::vec3 axis){
-    const float angle = degrees * M_PI/180.0f; // convert to radians
-    const glm::vec3 a = glm::normalize(axis);
-    glm::mat3 R;
-    glm::vec4 q = glm::vec4( glm::sin(0.5f*angle)*a, glm::cos(0.5f*angle) );
-    glm::vec4 ii(1.0f, 0.0f, 0.0f, 0.0f);
-    glm::vec4 jj(0.0f, 1.0f, 0.0f, 0.0f);
-    glm::vec4 kk(0.0f, 0.0f, 1.0f, 0.0f);
-    R[0] = glm::vec3(quatmultiply(q,quatmultiply(ii,quatconj(q))));
-    R[1] = glm::vec3(quatmultiply(q,quatmultiply(jj,quatconj(q))));
-    R[2] = glm::vec3(quatmultiply(q,quatmultiply(kk,quatconj(q))));
-    return R;
-}
-
 void animation( void ){
         float t2 = glutGet(GLUT_ELAPSED_TIME);
         float dt = (t2 - t1) / 10;
