@@ -12,6 +12,7 @@ uniform vec4 diffuse;
 uniform vec4 specular;
 uniform vec4 emision;
 uniform float shininess;
+uniform float alpha;
 
 // Light source parameters
 const int maximal_allowed_lights = 10;
@@ -46,6 +47,7 @@ void main (void){
             vec3 v = normalize(direction_vec(pos,eye));
             vec3 h = normalize(v + l);
             fragColor += ( ambient + diffuse*max(dot(n,l),0) + specular*pow(max(dot(n,h),0),shininess) ) * lightcolors[i];
+            fragColor.a = 0.5f;
         }
         // HW3: You will compute the lighting here.
         

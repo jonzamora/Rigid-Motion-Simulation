@@ -7,15 +7,15 @@ Scene.inl contains the definition of the scene graph
 using namespace glm;
 void Scene::init(void){
     // Create a geometry palette
-    geometry["planets"] = new Obj;
+    geometry["racket"] = new Obj;
     geometry["E ellipsoid"] = new Obj;
     geometry["F ellipsoid"] = new Obj;
     geometry["velocity"] = new Obj;
 
-    geometry["planets"] -> init("models/planets.obj");
+    geometry["racket"] -> init("models/racket.obj");
     geometry["E ellipsoid"] -> init("models/sphere.obj");
     geometry["F ellipsoid"] -> init("models/sphere.obj");
-    geometry["velocity"] -> init("models/sphere.obj");
+    geometry["velocity"] -> init("models/velocity_sphere.obj");
     
     // Create a material palette
     // Source: http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
@@ -42,12 +42,11 @@ void Scene::init(void){
     material["black rubber"] -> diffuse = vec4(0.01f, 0.01f, 0.01f, 1.0f);
     material["black rubber"] -> specular = vec4(0.4f, 0.4f, 0.4f, 1.0f);
     material["black rubber"] -> shininess = 10.0f;
-
     
     // Create a model palette
-    model["planets"] = new Model;
-    model["planets"] -> geometry = geometry["planets"];
-    model["planets"] -> material = material["red rubber"];
+    model["racket"] = new Model;
+    model["racket"] -> geometry = geometry["racket"];
+    model["racket"] -> material = material["red rubber"];
 
     model["E ellipsoid"] = new Model;
     model["E ellipsoid"] -> geometry = geometry["E ellipsoid"];
@@ -72,9 +71,9 @@ void Scene::init(void){
     light["sun2"] -> color = 1.0f*vec4(1.0f,1.0f,1.0f,1.0f);
     
     // Build the scene graph
-    node["planets"] = new Node;
-    node["planets"] -> models.push_back( model["planets"] );
-    node["planets"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the planets to half the original size
+    node["racket"] = new Node;
+    node["racket"] -> models.push_back( model["racket"] );
+    node["racket"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the racket to half the original size
 
     node["E ellipsoid"] = new Node;
     node["E ellipsoid"] -> models.push_back( model["E ellipsoid"] );
@@ -88,7 +87,7 @@ void Scene::init(void){
     node["velocity"] -> models.push_back( model["velocity"] );
     node["velocity"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the velocity sphere by half
     
-    node["world"] -> childnodes.push_back( node["planets"] );
+    node["world"] -> childnodes.push_back( node["racket"] );
     node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
     node["world"] -> childnodes.push_back( node["E ellipsoid"] );
     node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));

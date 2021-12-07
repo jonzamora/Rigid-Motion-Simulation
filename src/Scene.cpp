@@ -76,21 +76,40 @@ void Scene::draw(void){
     // HW3: Your code will only be above this line.
 }
 
-void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega)
+void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega, bool ellipsoids)
 {
-    Node* model = node["planets"];
-    model->modeltransforms.pop_back();
-    model->modeltransforms.push_back(glm::mat4(R) * originalM);
+    Node* modelR = node["racket"];
+    modelR->modeltransforms.pop_back();
+    modelR->modeltransforms.push_back(glm::mat4(R) * originalM);
+
+    if (ellipsoids)
+    {
+        Node* modelE = node["E ellipsoid"];
+        modelE->modeltransforms.pop_back();
+        modelE->modeltransforms.push_back(scale(SA1) * originalM);
+
+        Node* modelF = node["F ellipsoid"];
+        modelF->modeltransforms.pop_back();
+        modelF->modeltransforms.push_back(scale(SA2) * originalM);
+
+        Node* modelV = node["velocity"];
+        modelV->modeltransforms.pop_back();
+        modelV->modeltransforms.push_back(translate(omega) * originalM);
+    }
+
+    else
+    {
+        Node* modelE = node["E ellipsoid"];
+        modelE->modeltransforms.pop_back();
+        modelE->modeltransforms.push_back(scale(SA1) * originalM * scale(glm::vec3(0.0001f)));
+
+        Node* modelF = node["F ellipsoid"];
+        modelF->modeltransforms.pop_back();
+        modelF->modeltransforms.push_back(scale(SA2) * originalM * scale(glm::vec3(0.0001f)));
+
+        Node* modelV = node["velocity"];
+        modelV->modeltransforms.pop_back();
+        modelV->modeltransforms.push_back(translate(omega) * originalM * scale(glm::vec3(0.0001f)));
+    }
     
-    Node* modelE = node["E ellipsoid"];
-    modelE->modeltransforms.pop_back();
-    modelE->modeltransforms.push_back(scale(SA1) * originalM * scale(glm::vec3(0.001f)));
-
-    Node* modelF = node["F ellipsoid"];
-    modelF->modeltransforms.pop_back();
-    modelF->modeltransforms.push_back(scale(SA2) * originalM * scale(glm::vec3(0.001f)));
-
-    Node* modelV = node["velocity"];
-    modelV->modeltransforms.pop_back();
-    modelV->modeltransforms.push_back(translate(omega) * originalM * scale(glm::vec3(0.001f)));
 }
