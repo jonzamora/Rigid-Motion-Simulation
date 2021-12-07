@@ -205,19 +205,18 @@ glm::mat3 rot(const float degrees, const glm::vec3 axis){
 
 void animation( void ){
         float t2 = glutGet(GLUT_ELAPSED_TIME);
-        float dt = 0.1f;
+        float dt = (t2 - t1) / 10;
         t1 = t2;
 
         // Algorithm 2: Buss' Augmented Second-Order Method
         w = glm::inverse(M_world) * L;
         glm::vec3 alpha = -glm::inverse(M_world) * glm::cross(w, L);
         glm::vec3 wNew = w + (float(dt / 2.0f) * alpha) + (float(pow(dt, 2.0f)/12.0f) * glm::cross(alpha, w));
-        R = rot(dt * glm::length(wNew), glm::normalize(wNew)) * R;
+        R = glm::mat3(glm::rotate(glm::mat4(R), glm::radians(dt * glm::length(wNew)), glm::normalize(wNew)));
         M_world = R * M_model * glm::transpose(R);
 
         // Poinsot's Ellipsoids
         omega = glm::inverse(R) * w;
-        std::cout << "omega: " << glm::to_string(omega) << std::endl;
 
         scene.update(R, SA1, SA2, omega, ellipsoids);
         scene.draw();
