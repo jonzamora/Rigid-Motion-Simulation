@@ -79,23 +79,25 @@ void Scene::draw(void){
 void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega, glm::vec3 b, bool ellipsoids, bool translation)
 {
 
-    /**
-     * 4 Cases:
-     * ---
-     * 1. Ellipsoids = True, Translation = True
-     * 2. Ellipsoids = True, Translations = False
-     * 3. Ellipsoids = False, Translations = True
-     * 4. Ellipsoids = False, Translations = False
-    **/
-
-    Node* modelR = node["racket"];
+    Node* modelR = node["model"];
     modelR->modeltransforms.pop_back();
     glm::mat4 Rt = glm::mat4(R);
+    glm::mat4 B;
 
-    Rt [3] = glm::vec4(0.0f,0.0f,0.0f,1.0f);
-    glm::mat4 B = glm::mat4(1.0f);
-    B [3] = glm::vec4(b, 1.0f);
-    modelR->modeltransforms.push_back(Rt * originalM);
+    if (translation)
+    {
+        Rt [3] = glm::vec4(0.0f,0.0f,0.0f,1.0f);
+        B = glm::mat4(1.0f);
+        B [3] = glm::vec4(b, 1.0f);   
+    }
+
+    if (translation)
+    {
+        modelR->modeltransforms.push_back(B * Rt * originalM);
+    }
+    else{
+        modelR->modeltransforms.push_back(Rt * originalM);
+    }
 
     if (ellipsoids)
     {

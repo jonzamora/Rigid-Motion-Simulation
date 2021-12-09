@@ -63,9 +63,32 @@ static glm::vec3 b0;
 static glm::vec3 v0;
 static glm::vec3 a;
 static glm::vec3 b;
+static std::string modelName;
 
 void initialize( void ) {
-    
+
+    if (modelName == "Baymax")
+    {
+        modelName = "baymax.obj";
+    }
+    else if (modelName == "Drone")
+    {
+        modelName = "drone.obj";
+    }
+    else if (modelName == "Planets")
+    {
+        modelName = "planets.obj";
+    }
+    else if (modelName == "Racket")
+    {
+        modelName = "racket.obj";
+    }
+    else
+    {
+        std::cout << "Error: Model Name Does Not Exist!" << std::endl;
+        return;
+    }
+
     printHelp();
     glClearColor(background[0], background[1], background[2], background[3]); // background color
     glViewport(0, 0, width, height);
@@ -91,14 +114,15 @@ void initialize( void ) {
     L = M_world * w; // angular momentum
 
     //translation
-    b0 = glm::vec3(0.0f,0.5f,0.0f);
-    v0 = glm::vec3(0.1f,0.1f,0.1f);
-    a = glm::vec3(-0.5f,-0.5f,-0.5f);
+    b0 = glm::vec3(0.0f,0.0f,0.0f);
+    v0 = glm::vec3(0.5f,0.0f,0.0f);
+    a = glm::vec3(0.01f,0.0f,0.0f);
     
     b = b0;
     
     // Initialize scene
-    scene.init();
+
+    scene.init(modelName);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -217,8 +241,11 @@ void animation( void )
     // Poinsot's Ellipsoids
     omega = glm::inverse(R) * w;
     
-    // translation
-    b = b0 + v0 * t1/1000.0f + 0.5f * a * (float(pow(t1/1000.0f, 2.0f)));
+    if (translation)
+    {
+        // translation
+        b = b0 + v0 * t1/1000.0f + 0.5f * a * (float(pow(t1/1000.0f, 2.0f)));
+    }
 
     scene.update(R, SA1, SA2, omega, b, ellipsoids, translation);
     scene.draw();
@@ -228,6 +255,30 @@ void animation( void )
 
 int main(int argc, char** argv)
 {
+    std::cout << "\n***********************************************\n";
+    std::cout << "* CHOOSE 3D MODEL FOR RIGID MOTION SIMULATION *";
+    std::cout << "\n***********************************************\n";
+    std::cout << "************ (USE EXACT SPELLING) *************\n";
+    std::cout << "***********************************************\n";
+    std::cout << "(1) Baymax\n(2) Drone\n(3) Planets\n(4) Racket\n=> ";
+    std::cin >> modelName;
+
+    while (modelName != "Baymax" && modelName != "Drone" && modelName != "Planets" && modelName != "Racket")
+    {
+        std::cout << "\nOops! We do not have a 3D Model named '" << modelName << "'" << std::endl;
+        std::cout << "Please choose 'Baymax', 'Drone', 'Planets', or 'Racket' to continue" << std::endl;
+
+        std::cout << "\n***********************************************\n";
+        std::cout << "* CHOOSE 3D MODEL FOR RIGID MOTION SIMULATION *";
+        std::cout << "\n***********************************************\n";
+        std::cout << "************ (USE EXACT SPELLING) *************\n";
+        std::cout << "***********************************************\n";
+        std::cout << "(1) Baymax\n(2) Drone\n(3) Planets\n(4) Racket\n=> ";
+        std::cin >> modelName;
+    }
+
+    std::cout << "\nYOU HAVE CHOSEN '" << modelName << "' AS YOUR 3D MODEL. NICE!\n" << std::endl;
+
     // BEGIN CREATE WINDOW
     glutInit(&argc, argv);
     
@@ -250,7 +301,7 @@ int main(int argc, char** argv)
     // END CREATE WINDOW
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     initialize();
     glutDisplayFunc(display);

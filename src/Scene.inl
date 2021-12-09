@@ -5,14 +5,16 @@ Scene.inl contains the definition of the scene graph
 #include "Obj.h"
 
 using namespace glm;
-void Scene::init(void){
+void Scene::init(std::string modelName){
     // Create a geometry palette
-    geometry["racket"] = new Obj;
+    geometry["model"] = new Obj;
     geometry["E ellipsoid"] = new Obj;
     geometry["F ellipsoid"] = new Obj;
     geometry["velocity"] = new Obj;
 
-    geometry["racket"] -> init("models/racket.obj");
+    std::string modelPath = "models/" + modelName;
+    const char * fileName = + modelPath.c_str();
+    geometry["model"] -> init(fileName); // baymax.obj, drone.obj, planets.obj, racket.obj
     geometry["E ellipsoid"] -> init("models/sphere.obj");
     geometry["F ellipsoid"] -> init("models/sphere.obj");
     geometry["velocity"] -> init("models/velocity_sphere.obj");
@@ -42,11 +44,43 @@ void Scene::init(void){
     material["black rubber"] -> diffuse = vec4(0.01f, 0.01f, 0.01f, 1.0f);
     material["black rubber"] -> specular = vec4(0.4f, 0.4f, 0.4f, 1.0f);
     material["black rubber"] -> shininess = 10.0f;
+
+    material["white rubber"] = new Material;
+    material["white rubber"] -> ambient = vec4(0.05f,0.05f,0.05f,1.0f);
+    material["white rubber"] -> diffuse = vec4(0.5f,0.5f,0.5f,1.0f);
+    material["white rubber"] -> specular = vec4(0.7f,0.7f,0.7f,1.0f);
+    material["white rubber"] -> shininess = 10.0f;
+
+    material["yellow rubber"] = new Material;
+    material["yellow rubber"] -> ambient = vec4(0.05f,0.05f,0.0f,1.0f);
+    material["yellow rubber"] -> diffuse = vec4(0.5f,0.5f,0.4f,1.0f);
+    material["yellow rubber"] -> specular = vec4(0.7f,0.7f,0.04f,1.0f);
+    material["yellow rubber"] -> shininess = 10.0f;
     
     // Create a model palette
-    model["racket"] = new Model;
-    model["racket"] -> geometry = geometry["racket"];
-    model["racket"] -> material = material["red rubber"];
+    model["model"] = new Model;
+    model["model"] -> geometry = geometry["model"];
+
+    if (modelName == "baymax.obj")
+    {
+        model["model"] -> material = material["white rubber"];
+    }
+    else if (modelName == "drone.obj")
+    {
+        model["model"] -> material = material["black rubber"];
+    }
+    else if (modelName == "planets.obj")
+    {
+        model["model"] -> material = material["red rubber"];
+    }
+    else if (modelName == "racket.obj")
+    {
+        model["model"] -> material = material["red rubber"];
+    }
+    else
+    {
+        model["model"] -> material = material["black rubber"];
+    }
 
     model["E ellipsoid"] = new Model;
     model["E ellipsoid"] -> geometry = geometry["E ellipsoid"];
@@ -71,23 +105,23 @@ void Scene::init(void){
     light["sun2"] -> color = 1.0f*vec4(1.0f,1.0f,1.0f,1.0f);
     
     // Build the scene graph
-    node["racket"] = new Node;
-    node["racket"] -> models.push_back( model["racket"] );
-    node["racket"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the racket to half the original size
+    node["model"] = new Node;
+    node["model"] -> models.push_back( model["model"] );
+    node["model"] -> modeltransforms.push_back( scale(vec3(1.0f)) );
 
     node["E ellipsoid"] = new Node;
     node["E ellipsoid"] -> models.push_back( model["E ellipsoid"] );
-    node["E ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the E ellipsoid by half
+    node["E ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) );
 
     node["F ellipsoid"] = new Node;
     node["F ellipsoid"] -> models.push_back( model["F ellipsoid"] );
-    node["F ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the F ellipsoid by half
+    node["F ellipsoid"] -> modeltransforms.push_back( scale(vec3(1.0f)) );
 
     node["velocity"] = new Node;
     node["velocity"] -> models.push_back( model["velocity"] );
-    node["velocity"] -> modeltransforms.push_back( scale(vec3(1.0f)) ); // we scale the velocity sphere by half
+    node["velocity"] -> modeltransforms.push_back( scale(vec3(1.0f)) );
     
-    node["world"] -> childnodes.push_back( node["racket"] );
+    node["world"] -> childnodes.push_back( node["model"] );
     node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
     node["world"] -> childnodes.push_back( node["E ellipsoid"] );
     node["world"] -> childtransforms.push_back( translate(vec3(0.0f,0.5f,0.0f)));
@@ -99,7 +133,7 @@ void Scene::init(void){
     // Put a camera
     camera = new Camera;
     camera -> target_default = vec3( 0.0f, 1.0f, 0.0f );
-    camera -> eye_default = vec3( 0.0f, 1.0f, 25.0f );
+    camera -> eye_default = vec3( 0.0f, 3.0f, 35.0f );
     camera -> up_default = vec3( 0.0f, 1.0f, 0.0f );
     camera -> reset();
     

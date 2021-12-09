@@ -50,7 +50,7 @@ public:
         node["world"] = new Node;
     }
     
-    void init( void );
+    void init( std::string );
     void draw( void );
     void update( glm::mat3, glm::vec3, glm::vec3, glm::vec3, glm::vec3, bool, bool );
     
