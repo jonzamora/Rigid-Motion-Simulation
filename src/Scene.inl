@@ -50,12 +50,6 @@ void Scene::init(std::string modelName){
     material["white rubber"] -> diffuse = vec4(0.5f,0.5f,0.5f,1.0f);
     material["white rubber"] -> specular = vec4(0.7f,0.7f,0.7f,1.0f);
     material["white rubber"] -> shininess = 10.0f;
-
-    material["yellow rubber"] = new Material;
-    material["yellow rubber"] -> ambient = vec4(0.05f,0.05f,0.0f,1.0f);
-    material["yellow rubber"] -> diffuse = vec4(0.5f,0.5f,0.4f,1.0f);
-    material["yellow rubber"] -> specular = vec4(0.7f,0.7f,0.04f,1.0f);
-    material["yellow rubber"] -> shininess = 10.0f;
     
     // Create a model palette
     model["model"] = new Model;

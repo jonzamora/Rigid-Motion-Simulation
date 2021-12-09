@@ -115,13 +115,12 @@ void initialize( void ) {
 
     //translation
     b0 = glm::vec3(0.0f,0.0f,0.0f);
-    v0 = glm::vec3(0.5f,0.0f,0.0f);
-    a = glm::vec3(0.01f,0.0f,0.0f);
+    v0 = glm::vec3(0.0f,0.0f,0.5f);
+    a = glm::vec3(0.0f,0.0f,0.5f);
     
     b = b0;
     
     // Initialize scene
-
     scene.init(modelName);
 
     // Enable depth test

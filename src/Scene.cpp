@@ -128,5 +128,4 @@ void Scene::update( glm::mat3 R, glm::vec3 SA1, glm::vec3 SA2, glm::vec3 omega, 
         modelV->modeltransforms.pop_back();
         modelV->modeltransforms.push_back(translate(omega) * originalM * scale(glm::vec3(0.0001f)));
     }
-    
 }
