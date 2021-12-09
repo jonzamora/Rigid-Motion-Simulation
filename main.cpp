@@ -57,7 +57,7 @@ static float F;
 static float mu1, mu2, mu3;
 static glm::vec3 SA1, SA2;
 static bool ellipsoids = true;
-static bool translation = true;
+static bool translation = false;
 static bool resetT1 = false;
 static glm::vec3 b0;
 static glm::vec3 v0;
