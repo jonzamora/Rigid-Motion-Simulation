@@ -2,6 +2,8 @@
 
 ---
 
+Simulate Rigid-Body Motion (Translation and Rotation) in 3D 🌎
+
 **Partners**: Jonathan Zamora-Anaya and Shunkai Yu
 
 **Instructions**: Run `make && ./SceneViewer` to execute the simulation
